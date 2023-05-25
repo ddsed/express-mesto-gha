@@ -24,6 +24,9 @@ const getCards = (req, res) => {
 
 const deleteCardById = (req, res) => {
   cardModel.findByIdAndRemove(req.params.cardId)
+    .orFail(() => {
+      throw new Error('CardNotfound');
+    })
     .then(() => res.send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError' || 'ValidationError') {
@@ -79,6 +82,9 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      throw new Error('CardNotfound');
+    })
     .then((card) => {
       res.send(card);
     })
@@ -111,6 +117,9 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      throw new Error('CardNotfound');
+    })
     .then((card) => {
       res.send(card);
     })

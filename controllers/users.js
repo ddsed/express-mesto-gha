@@ -24,6 +24,9 @@ const getUsers = (req, res) => {
 
 const getUserById = (req, res) => {
   userModel.findById(req.params.userId)
+    .orFail(() => {
+      throw new Error('UserNotfound');
+    })
     .then((user) => {
       res.send(user);
     })
@@ -74,6 +77,9 @@ const createUser = (req, res) => {
 
 const updateUser = (req, res) => {
   userModel.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
+    .orFail(() => {
+      throw new Error('UserNotfound');
+    })
     .then((user) => {
       res.send(user);
     })
@@ -102,6 +108,9 @@ const updateUser = (req, res) => {
 
 const updateUserAvatar = (req, res) => {
   userModel.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
+    .orFail(() => {
+      throw new Error('UserNotfound');
+    })
     .then((user) => {
       res.send(user);
     })
