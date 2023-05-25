@@ -24,14 +24,11 @@ const getUsers = (req, res) => {
 
 const getUserById = (req, res) => {
   userModel.findById(req.params.userId)
-    .orFail(() => {
-      throw new Error('UserNotfound');
-    })
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
+      if (err.name === 'DocumentNotFoundError' || !req.user._id) {
         res.status(404).send({
           message: 'Пользователь не найден',
           err: err.message,
@@ -77,9 +74,6 @@ const createUser = (req, res) => {
 
 const updateUser = (req, res) => {
   userModel.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
-    .orFail(() => {
-      throw new Error('UserNotfound');
-    })
     .then((user) => {
       res.send(user);
     })
@@ -90,7 +84,7 @@ const updateUser = (req, res) => {
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError') {
+      } else if (err.name === 'DocumentNotFoundError' || !req.user._id) {
         res.status(404).send({
           message: 'Пользователь не найден',
           err: err.message,
@@ -108,9 +102,6 @@ const updateUser = (req, res) => {
 
 const updateUserAvatar = (req, res) => {
   userModel.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
-    .orFail(() => {
-      throw new Error('UserNotfound');
-    })
     .then((user) => {
       res.send(user);
     })
@@ -121,7 +112,7 @@ const updateUserAvatar = (req, res) => {
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError') {
+      } else if (err.name === 'DocumentNotFoundError' || !req.user._id) {
         res.status(404).send({
           message: 'Пользователь не найден',
           err: err.message,

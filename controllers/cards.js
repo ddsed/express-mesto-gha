@@ -24,9 +24,6 @@ const getCards = (req, res) => {
 
 const deleteCardById = (req, res) => {
   cardModel.findByIdAndRemove(req.params.cardId)
-    .orFail(() => {
-      throw new Error('CardNotfound');
-    })
     .then(() => res.send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError' || 'ValidationError') {
@@ -35,7 +32,7 @@ const deleteCardById = (req, res) => {
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError') {
+      } else if (err.name === 'DocumentNotFoundError' || !req.card._id) {
         res.status(404).send({
           message: 'Карточка не найдена',
           err: err.message,
@@ -82,9 +79,6 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('CardNotfound');
-    })
     .then((card) => {
       res.send(card);
     })
@@ -95,7 +89,7 @@ const likeCard = (req, res) => {
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError') {
+      } else if (err.name === 'DocumentNotFoundError' || !req.card._id) {
         res.status(404).send({
           message: 'Пользователь не найден',
           err: err.message,
@@ -117,9 +111,6 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('CardNotfound');
-    })
     .then((card) => {
       res.send(card);
     })
@@ -130,7 +121,7 @@ const dislikeCard = (req, res) => {
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError') {
+      } else if (err.name === 'DocumentNotFoundError' || !req.card._id) {
         res.status(404).send({
           message: 'Пользователь не найден',
           err: err.message,
