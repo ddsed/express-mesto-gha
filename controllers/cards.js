@@ -6,7 +6,7 @@ const getCards = (req, res) => {
       res.send(cards);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || 'ValidationError') {
         res.status(400).send({
           message: 'Переданы некорректные данные',
           err: err.message,
@@ -26,7 +26,13 @@ const deleteCardById = (req, res) => {
   cardModel.findByIdAndRemove(req.params.cardId)
     .then(() => res.send({ message: 'Карточка удалена' }))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
+      if (err.name === 'CastError' || 'ValidationError') {
+        res.status(400).send({
+          message: 'Переданы некорректные данные',
+          err: err.message,
+          stack: err.stack,
+        });
+      } else if (err.name === 'DocumentNotFoundError') {
         res.status(404).send({
           message: 'Карточка не найдена',
           err: err.message,
@@ -51,7 +57,7 @@ const createCard = (req, res) => {
       res.status(201).send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || 'ValidationError') {
         res.status(400).send({
           message: 'Переданы некорректные данные',
           err: err.message,
@@ -77,7 +83,7 @@ const likeCard = (req, res) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || 'ValidationError') {
         res.status(400).send({
           message: 'Переданы некорректные данные',
           err: err.message,
@@ -109,7 +115,7 @@ const dislikeCard = (req, res) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || 'ValidationError') {
         res.status(400).send({
           message: 'Переданы некорректные данные',
           err: err.message,

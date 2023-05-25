@@ -34,6 +34,12 @@ const getUserById = (req, res) => {
           err: err.message,
           stack: err.stack,
         });
+      } else if (err.name === 'CastError' || 'ValidationError') {
+        res.status(400).send({
+          message: 'Переданы некорректные данные',
+          err: err.message,
+          stack: err.stack,
+        });
       } else {
         res.status(500).send({
           message: 'Внутренняя ошибка сервера',
@@ -50,7 +56,7 @@ const createUser = (req, res) => {
       res.status(201).send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || 'ValidationError') {
         res.status(400).send({
           message: 'Переданы некорректные данные',
           err: err.message,
@@ -72,7 +78,7 @@ const updateUser = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || 'ValidationError') {
         res.status(400).send({
           message: 'Переданы некорректные данные',
           err: err.message,
@@ -100,7 +106,7 @@ const updateUserAvatar = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || 'ValidationError') {
         res.status(400).send({
           message: 'Переданы некорректные данные',
           err: err.message,
