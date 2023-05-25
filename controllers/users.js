@@ -24,11 +24,14 @@ const getUsers = (req, res) => {
 
 const getUserById = (req, res) => {
   userModel.findById(req.params.userId)
+    .orFail(() => {
+      throw new Error('Notfound');
+    })
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError' || !req.user._id) {
+      if (err.message === 'Notfound') {
         res.status(404).send({
           message: 'Пользователь не найден',
           err: err.message,
@@ -74,19 +77,22 @@ const createUser = (req, res) => {
 
 const updateUser = (req, res) => {
   userModel.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
+    .orFail(() => {
+      throw new Error('Notfound');
+    })
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
+      if (err.message === 'Notfound') {
+        res.status(404).send({
+          message: 'Пользователь не найден',
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError' || !req.user._id) {
-        res.status(404).send({
-          message: 'Пользователь не найден',
+      } else if (err.name === 'CastError' || 'ValidationError') {
+        res.status(400).send({
+          message: 'Переданы некорректные данные',
           err: err.message,
           stack: err.stack,
         });
@@ -102,19 +108,22 @@ const updateUser = (req, res) => {
 
 const updateUserAvatar = (req, res) => {
   userModel.findByIdAndUpdate(req.user._id, req.body, { new: true, runValidators: true })
+    .orFail(() => {
+      throw new Error('Notfound');
+    })
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
+      if (err.message === 'Notfound') {
+        res.status(404).send({
+          message: 'Пользователь не найден',
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError' || !req.user._id) {
-        res.status(404).send({
-          message: 'Пользователь не найден',
+      } else if (err.name === 'CastError' || 'ValidationError') {
+        res.status(400).send({
+          message: 'Переданы некорректные данные',
           err: err.message,
           stack: err.stack,
         });

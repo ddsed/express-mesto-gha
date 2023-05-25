@@ -24,17 +24,20 @@ const getCards = (req, res) => {
 
 const deleteCardById = (req, res) => {
   cardModel.findByIdAndRemove(req.params.cardId)
+    .orFail(() => {
+      throw new Error('Notfound');
+    })
     .then(() => res.send({ message: 'Карточка удалена' }))
     .catch((err) => {
-      if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
+      if (err.message === 'Notfound') {
+        res.status(404).send({
+          message: 'Карточка не найдена',
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError' || !req.card._id) {
-        res.status(404).send({
-          message: 'Карточка не найдена',
+      } else if (err.name === 'CastError' || 'ValidationError') {
+        res.status(400).send({
+          message: 'Переданы некорректные данные',
           err: err.message,
           stack: err.stack,
         });
@@ -79,19 +82,22 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      throw new Error('Notfound');
+    })
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
+      if (err.message === 'Notfound') {
+        res.status(404).send({
+          message: 'Пользователь не найден',
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError' || !req.card._id) {
-        res.status(404).send({
-          message: 'Пользователь не найден',
+      } else if (err.name === 'CastError' || 'ValidationError') {
+        res.status(400).send({
+          message: 'Переданы некорректные данные',
           err: err.message,
           stack: err.stack,
         });
@@ -111,19 +117,22 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(() => {
+      throw new Error('Notfound');
+    })
     .then((card) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
+      if (err.message === 'Notfound') {
+        res.status(404).send({
+          message: 'Пользователь не найден',
           err: err.message,
           stack: err.stack,
         });
-      } else if (err.name === 'DocumentNotFoundError' || !req.card._id) {
-        res.status(404).send({
-          message: 'Пользователь не найден',
+      } else if (err.name === 'CastError' || 'ValidationError') {
+        res.status(400).send({
+          message: 'Переданы некорректные данные',
           err: err.message,
           stack: err.stack,
         });
