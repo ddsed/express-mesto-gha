@@ -1,24 +1,13 @@
 const userModel = require('../models/user');
+const errors = require('../errors/errors');
 
 const getUsers = (req, res) => {
   userModel.find({})
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
-        });
-      } else {
-        res.status(500).send({
-          message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
-        });
-      }
+    .catch(() => {
+      res.status(errors.internal_error).send({ message: 'Внутренняя ошибка сервера' });
     });
 };
 
@@ -32,44 +21,38 @@ const getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'Notfound') {
-        res.status(404).send({
+        res.status(errors.not_found).send({
           message: 'Пользователь не найден',
-          err: err.message,
-          stack: err.stack,
         });
       } else if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
+        res.status(errors.bad_request).send({
           message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
         });
       } else {
-        res.status(500).send({
+        res.status(errors.internal_error).send({
           message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
         });
       }
     });
 };
 
 const createUser = (req, res) => {
-  userModel.create(req.body)
+  userModel.create({
+    name: req.body.name,
+    about: req.body.about,
+    avatar: req.body.avatar,
+  })
     .then((user) => {
       res.status(201).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
+        res.status(errors.bad_request).send({
           message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
         });
       } else {
-        res.status(500).send({
+        res.status(errors.internal_error).send({
           message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
         });
       }
     });
@@ -85,22 +68,16 @@ const updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'Notfound') {
-        res.status(404).send({
+        res.status(errors.not_found).send({
           message: 'Пользователь не найден',
-          err: err.message,
-          stack: err.stack,
         });
       } else if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
+        res.status(errors.bad_request).send({
           message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
         });
       } else {
-        res.status(500).send({
+        res.status(errors.internal_error).send({
           message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
         });
       }
     });
@@ -116,22 +93,16 @@ const updateUserAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'Notfound') {
-        res.status(404).send({
+        res.status(errors.not_found).send({
           message: 'Пользователь не найден',
-          err: err.message,
-          stack: err.stack,
         });
       } else if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
+        res.status(errors.bad_request).send({
           message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
         });
       } else {
-        res.status(500).send({
+        res.status(errors.internal_error).send({
           message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
         });
       }
     });

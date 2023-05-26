@@ -1,24 +1,13 @@
 const cardModel = require('../models/card');
+const errors = require('../errors/errors');
 
 const getCards = (req, res) => {
   cardModel.find({})
     .then((cards) => {
       res.send(cards);
     })
-    .catch((err) => {
-      if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
-        });
-      } else {
-        res.status(500).send({
-          message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
-        });
-      }
+    .catch(() => {
+      res.status(errors.internal_error).send({ message: 'Внутренняя ошибка сервера' });
     });
 };
 
@@ -30,22 +19,16 @@ const deleteCardById = (req, res) => {
     .then(() => res.send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.message === 'Notfound') {
-        res.status(404).send({
+        res.status(errors.not_found).send({
           message: 'Карточка не найдена',
-          err: err.message,
-          stack: err.stack,
         });
       } else if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
+        res.status(errors.bad_request).send({
           message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
         });
       } else {
-        res.status(500).send({
+        res.status(errors.internal_error).send({
           message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
         });
       }
     });
@@ -53,7 +36,8 @@ const deleteCardById = (req, res) => {
 
 const createCard = (req, res) => {
   cardModel.create({
-    ...req.body,
+    name: req.body.name,
+    link: req.body.link,
     owner: req.user._id,
   })
     .then((card) => {
@@ -61,16 +45,12 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
+        res.status(errors.bad_request).send({
           message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
         });
       } else {
-        res.status(500).send({
+        res.status(errors.internal_error).send({
           message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
         });
       }
     });
@@ -90,22 +70,16 @@ const likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'Notfound') {
-        res.status(404).send({
+        res.status(errors.not_found).send({
           message: 'Пользователь не найден',
-          err: err.message,
-          stack: err.stack,
         });
       } else if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
+        res.status(errors.bad_request).send({
           message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
         });
       } else {
-        res.status(500).send({
+        res.status(errors.internal_error).send({
           message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
         });
       }
     });
@@ -125,22 +99,16 @@ const dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'Notfound') {
-        res.status(404).send({
+        res.status(errors.not_found).send({
           message: 'Пользователь не найден',
-          err: err.message,
-          stack: err.stack,
         });
       } else if (err.name === 'CastError' || 'ValidationError') {
-        res.status(400).send({
+        res.status(errors.bad_request).send({
           message: 'Переданы некорректные данные',
-          err: err.message,
-          stack: err.stack,
         });
       } else {
-        res.status(500).send({
+        res.status(errors.internal_error).send({
           message: 'Внутренняя ошибка сервера',
-          err: err.message,
-          stack: err.stack,
         });
       }
     });
