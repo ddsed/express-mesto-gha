@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/user');
-// const errors = require('../errors/errors');
 const jwtAuth = require('../utils/jwtAuth');
 
 const BadRequestError = require('../errors/bad-request');

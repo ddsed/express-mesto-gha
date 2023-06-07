@@ -1,5 +1,4 @@
 const cardModel = require('../models/card');
-// const errors = require('../errors/errors');
 
 const BadRequestError = require('../errors/bad-request');
 const NotFoundError = require('../errors/not-found');
