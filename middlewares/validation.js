@@ -13,7 +13,7 @@ const validationUserInfo = celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/https*:\/\/\S+/gi),
+    avatar: Joi.string().pattern(/https*:\/\/\S+/i),
   }),
 });
 
@@ -26,7 +26,7 @@ const validationUpdateUser = celebrate({
 
 const validationUpdateUserAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(/https*:\/\/\S+/gi),
+    avatar: Joi.string().pattern(/https*:\/\/\S+/i),
   }),
 });
 
