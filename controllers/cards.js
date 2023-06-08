@@ -15,7 +15,7 @@ const getCards = (req, res, next) => {
 const deleteCardById = (req, res, next) => {
   cardModel.findById(req.params.cardId)
     .orFail(() => {
-      throw new Error('Notfound');
+      throw new NotFoundError('Карточка не найдена');
     })
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
@@ -26,9 +26,7 @@ const deleteCardById = (req, res, next) => {
         .catch(next);
     })
     .catch((err) => {
-      if (err.message === 'Notfound') {
-        next(new NotFoundError('Карточка не найдена'));
-      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);

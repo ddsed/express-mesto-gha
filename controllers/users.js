@@ -124,7 +124,7 @@ const loginUser = (req, res, next) => {
 
   userModel.findOne({ email }).select('+password')
     .orFail(() => {
-      throw new Error('UnauthorizedError');
+      throw new UnauthorizedError('Email или пароль неверный');
     })
     .then((user) => Promise.all([user, bcrypt.compare(password, user.password)]))
     .then(([user, isEqual]) => {
@@ -136,9 +136,7 @@ const loginUser = (req, res, next) => {
       res.status(200).send({ token });
     })
     .catch((err) => {
-      if (err.message === 'UnauthorizedError') {
-        next(new UnauthorizedError('Email или пароль неверный'));
-      } if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError' || !email || !password) {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
