@@ -9,7 +9,7 @@ const validationUserId = celebrate({
 
 const validationUserInfo = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required(),
+    email: Joi.string().required().pattern(/^(.+)@(\S+)$/i),
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -40,7 +40,7 @@ const validationCardId = celebrate({
 const validationCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required(),
+    link: Joi.string().required().pattern(/https*:\/\/\S+/i),
   }),
 });
 
