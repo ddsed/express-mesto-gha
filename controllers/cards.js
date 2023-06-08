@@ -2,7 +2,7 @@ const cardModel = require('../models/card');
 
 const BadRequestError = require('../errors/bad-request');
 const NotFoundError = require('../errors/not-found');
-const UnauthorizedError = require('../errors/unauthorized');
+const NoRightsError = require('../errors/no-rights');
 
 const getCards = (req, res, next) => {
   cardModel.find({})
@@ -19,7 +19,7 @@ const deleteCardById = (req, res, next) => {
     })
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
-        throw new UnauthorizedError('У вас нет прав на удаление данной карточки');
+        throw new NoRightsError('У вас нет прав на удаление данной карточки');
       }
       cardModel.findByIdAndRemove(req.params.cardId)
         .then(() => res.send({ message: 'Карточка удалена' }))
@@ -28,7 +28,7 @@ const deleteCardById = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'Notfound') {
         next(new NotFoundError('Карточка не найдена'));
-      } else if (err.name === 'CastError' || 'ValidationError') {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -46,7 +46,7 @@ const createCard = (req, res, next) => {
       res.status(201).send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError' || 'ValidationError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -69,7 +69,7 @@ const likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'Notfound') {
         next(new NotFoundError('Карточка не найдена'));
-      } else if (err.name === 'CastError' || 'ValidationError') {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -92,7 +92,7 @@ const dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'Notfound') {
         next(new NotFoundError('Карточка не найдена'));
-      } else if (err.name === 'CastError' || 'ValidationError') {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);

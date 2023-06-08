@@ -26,7 +26,7 @@ const getUserById = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'Notfound') {
         next(new NotFoundError('Пользователь не найден'));
-      } else if (err.name === 'CastError' || 'ValidationError') {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -45,7 +45,7 @@ const getCurrentUser = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'Notfound') {
         next(new NotFoundError('Пользователь не найден'));
-      } else if (err.name === 'CastError' || 'ValidationError') {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -73,7 +73,7 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже существует'));
-      } else if (err.name === 'CastError' || 'ValidationError') {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -92,7 +92,7 @@ const updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'Notfound') {
         next(new NotFoundError('Пользователь не найден'));
-      } else if (err.name === 'CastError' || 'ValidationError') {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -111,7 +111,7 @@ const updateUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'Notfound') {
         next(new NotFoundError('Пользователь не найден'));
-      } else if (err.name === 'CastError' || 'ValidationError') {
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -138,6 +138,8 @@ const loginUser = (req, res, next) => {
     .catch((err) => {
       if (err.message === 'UnauthorizedError') {
         next(new UnauthorizedError('Email или пароль неверный'));
+      } if (err.name === 'CastError' || err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
       }
